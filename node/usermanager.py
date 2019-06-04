@@ -5,7 +5,7 @@ from . import context
 
 lock = threading.Lock()
 
-class UserPool:
+class UserManager:
 
     def __init__(self):
         self.users = {}

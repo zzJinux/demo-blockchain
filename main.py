@@ -6,7 +6,7 @@ import node.context as context
 import node.server as server
 import node.client as client
 from node.transaction import TransactionManager
-from node.usermanager import UserPool
+from node.usermanager import UserManager
 
 
 def runServer(server_instance):
