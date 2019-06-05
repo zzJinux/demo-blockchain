@@ -63,7 +63,9 @@ def runNode():
             dest_id, data = command_text.split(' ')[1:]
             assert len(dest_id) == 8
 
-            tx_manager.generate_transaction(data.encode(), bytes.fromhex(dest_id))
+            user = context.USER_POOL.get_user(bytes.fromhex(dest_id))
+
+            tx_manager.generate_transaction(data.encode(), user[0])
         elif command_text.startswith('blk '):
             if not context.IS_MINER: continue
             
