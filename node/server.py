@@ -17,8 +17,11 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
             reply = handler_mapping[cmd](data)
             if reply:
-                cmd, data = reply[0], (reply[1] if len(reply) > 1 else None)
-                self.request.send(cmd + pickle.dumps(data))
+                if len(reply) > 1:
+                    cmd, data = reply[0], reply[1]
+                    self.request.send(cmd + pickle.dumps(data))
+                else:
+                    self.request.send(reply[0])
             else:
                 pass
         except Exception as e:
