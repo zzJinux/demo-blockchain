@@ -20,7 +20,7 @@ def runServer(server_instance):
 
 def runNode():
     print('...initiating node')
-    server_instance = server.ThreadedTCPserver(
+    server_instance = server.ThreadedTCPServer(
         (context.HOST, context.PORT),
         server.ThreadedTCPRequestHandler
     )
@@ -38,8 +38,8 @@ def runNode():
     server_thread.start()
 
     tx_manager = TransactionManager()
-    tx_manager.register_handlers()
-    context.USER_POOL.register_handlers()
+    tx_manager.register_handlers(server_instance)
+    context.USER_POOL.register_handlers(server_instance)
 
     # handle command-line input
     # blocking client

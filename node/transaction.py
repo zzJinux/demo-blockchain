@@ -15,8 +15,8 @@ class TransactionManager:
         self.transaction_set = set()
         self.digest_counter = 0
     
-    def register_handlers(self):
-        server.handler_mapping[b'tx--'] = self._new_transaction_handler
+    def register_handlers(self, server_instance):
+        server_instance.add_handler(b'tx--', self._new_transaction_handler)
     
     def _new_transaction_handler(self, tx):
         if not validate_transaction(tx): return
