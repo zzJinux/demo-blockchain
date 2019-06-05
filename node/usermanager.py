@@ -19,14 +19,14 @@ class UserManager:
         host, port, pubkey, name = peer_data
         addr = (host, port)
 
-        self.addUser(pubkey, name, addr)
+        self.add_user(pubkey, name, addr)
         return b'ok--', (context.PUBLIC_KEY.to_string(), context.NAME)
     
     def _bye_handler(self, pubkey):
-        self.removeUser(pubkey)
+        self.remove_user(pubkey)
         return
 
-    def addUser(self, pubkey, name, server_addr):
+    def add_user(self, pubkey, name, server_addr):
         if pubkey in self.users:
             return None
 
@@ -39,7 +39,7 @@ class UserManager:
 
         return pubkey
 
-    def removeUser(self, pubkey):
+    def remove_user(self, pubkey):
         if pubkey not in self.users:
             return
 
@@ -53,9 +53,9 @@ class UserManager:
 
         return
 
-    def get_peer_addresses(self):
+    def get_user_list(self):
         lock.acquire()
-        peer_list = list(iter(self.users.values()))
+        user_list = list(iter(self.users.values()))
         lock.release()
 
-        return map(lambda x: x[1], peer_list)
+        return map(lambda x: x[1], user_list)

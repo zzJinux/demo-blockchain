@@ -6,7 +6,7 @@ from . import context
 
 def quit(server_instance):
     print('## quitting')
-    peer_addresses = context.USER_POOL.get_peer_addresses()
+    peer_addresses = context.USER_POOL.get_user_list()
     threads = []
 
     # say goodbye to pees in multithreaded way
@@ -56,14 +56,14 @@ def join(peer_address):
     if cmd != b'ok--': raise Exception
     
     peer_pubkey, peer_name = data
-    context.USER_POOL.addUser(peer_pubkey, peer_name, peer_address)
+    context.USER_POOL.add_user(peer_pubkey, peer_name, peer_address)
     print('## successfully joined to %s' % peer_name)
     return
 
 
 def broadcast(message):
     print('## broadcast message to all known peers!')
-    peer_addresses = context.USER_POOL.get_peer_addresses()
+    peer_addresses = context.USER_POOL.get_user_list()
     threads = []
 
     # multithreaded broadcasting
