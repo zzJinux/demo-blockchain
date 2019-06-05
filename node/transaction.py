@@ -35,11 +35,11 @@ class TransactionManager:
         assert isinstance(to_pubkey, bytes)
 
         from_pubkey = context.PUBLIC_KEY.to_string()
-        timestamp = int(time.time()) # in seconds
+        timestamp_bytes = int(time.time()).to_bytes(4, 'big') # in seconds
 
-        tx_bytes = from_pubkey + to_pubkey + data + bytes([timestamp])
+        tx_bytes = from_pubkey + to_pubkey + data + timestamp_bytes
         signature = context.PRIVATE_KEY.sign(tx_bytes)
-        tx = (from_pubkey, to_pubkey, data, timestamp, signature)
+        tx = (from_pubkey, to_pubkey, data, timestamp_bytes, signature)
 
         self.store_verified_transaction(tx)
         self.broadcast_transaction(tx)
