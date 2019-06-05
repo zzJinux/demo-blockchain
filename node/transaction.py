@@ -20,6 +20,10 @@ class TransactionManager:
     def _new_transaction_handler(self, tx):
         if not validate_transaction(tx): return
 
+        if context.PUBLIC_KEY.to_string() == tx[2]:
+            # ignore own transaction
+            return (b'ok--',)
+        
         self.store_verified_transaction(tx)
         self.broadcast_transaction(tx)
 
