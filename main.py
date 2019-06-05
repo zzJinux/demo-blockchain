@@ -25,6 +25,7 @@ def runNode():
         server.ThreadedTCPRequestHandler
     )
     print('...bind to [%s:%s]' % server_instance.server_address)
+    context.HOST, context.PORT = server_instance.server_address
 
     # non-blocking server
     server_thread = threading.Thread(target=runServer, args=(server_instance,))
