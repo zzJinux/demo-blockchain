@@ -27,6 +27,11 @@ def runNode():
     print('...bind to [%s:%s]' % server_instance.server_address)
     context.HOST, context.PORT = server_instance.server_address
 
+    print(f'Hi {context.NAME}.')
+
+    shorthand_id = ''.join(f'{x:02x}' for x in context.PUBLIC_KEY.to_string()[:4])
+    print(f'Your identity (shortened): {shorthand_id}')
+
     # non-blocking server
     server_thread = threading.Thread(target=runServer, args=(server_instance,))
     server_thread.daemon = True
@@ -55,9 +60,10 @@ def runNode():
 
             client.join((host, port))
         elif command_text.startswith('tx '):
-            tx_msg = command_text[len('tx '):].encode()
+            dest_id, data = command_text.split(' ')[1:]
+            assert len(dest_id) == 8
 
-            tx_manager.generate_transaction(tx_msg)
+            tx_manager.generate_transaction(data.encode(), bytes.fromhex(dest_id))
         elif command_text.startswith('blk '):
             if not context.IS_MINER: continue
             
