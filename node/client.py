@@ -138,8 +138,7 @@ class NodeClient:
 
     def generate_transaction(self, dest_id, data):
         print(f'transaction to_id: {dest_id}')
-        user = self.user_manager.get_user(bytes.fromhex(dest_id))
-        tx = self.tx_manager.generate_transaction(user[0], data)
+        tx = self.tx_manager.generate_transaction(bytes.fromhex(dest_id), data)
         self.broadcast_transaction(tx)
 
         return
