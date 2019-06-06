@@ -1,5 +1,6 @@
 import time
 import pickle
+from ecdsa import SigningKey
 
 from . import context
 from . import server
@@ -10,39 +11,26 @@ from .validator import validate_transaction
 
 class TransactionManager:
     
-    def __init__(self):
+    def __init__(self, signing_key, verifying_key):
+        self.signing_key = signing_key
+        self.verifying_key = verifying_key
+
         self.transaction_list = []
         self.transaction_set = set()
         self.digest_counter = 0
     
-    def register_handlers(self, server_instance):
-        server_instance.add_handler(b'tx--', self._new_transaction_handler)
-    
-    def _new_transaction_handler(self, tx):
-        if not validate_transaction(tx): return
-
-        if context.PUBLIC_KEY.to_string() == tx[0]:
-            # ignore own transaction
-            return (b'ok--',)
-        
-        self.store_verified_transaction(tx)
-        self.broadcast_transaction(tx)
-
-        return (b'ok--',)
-
     def generate_transaction(self, data, to_pubkey):
         assert isinstance(data, bytes)
         assert isinstance(to_pubkey, bytes)
 
-        from_pubkey = context.PUBLIC_KEY.to_string()
+        from_pubkey = self.verifying_key
         timestamp_bytes = int(time.time()).to_bytes(4, 'big') # in seconds
 
         tx_bytes = from_pubkey + to_pubkey + data + timestamp_bytes
-        signature = context.PRIVATE_KEY.sign(tx_bytes)
+        signature = SigningKey.from_string(self.signing_key).sign(tx_bytes)
         tx = (from_pubkey, to_pubkey, data, timestamp_bytes, signature)
 
         self.store_verified_transaction(tx)
-        self.broadcast_transaction(tx)
         return tx
     
     def store_verified_transaction(self, tx):
@@ -64,5 +52,16 @@ class TransactionManager:
                 
         return
     
-    def broadcast_transaction(self, tx):
-        client.broadcast(b'tx--' + pickle.dumps(tx))
+    def accept_transaction(self, tx):
+        if not validate_transaction(tx):
+            # invalid transaction
+            return False
+
+        if self.verifying_key == tx[0]:
+            # ignore own transaction
+            return False
+        
+        self.store_verified_transaction(tx)
+        return True
+    
+
