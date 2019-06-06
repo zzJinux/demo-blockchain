@@ -35,6 +35,9 @@ class QtGuiNode(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.my_addr = QtWidgets.QLineEdit(self.verticalLayoutWidget)
+        self.my_addr.setObjectName("my_addr")
+        self.verticalLayout.addWidget(self.my_addr)
         self.join_addr = QtWidgets.QLineEdit(self.verticalLayoutWidget)
         self.join_addr.setObjectName("join_addr")
         self.verticalLayout.addWidget(self.join_addr)
@@ -128,7 +131,7 @@ class QtGuiNode(object):
         self.block_list.setModel(model)
 
 class WindowNode:
-    def __init__(self, node_type, shorthand, join_callback_func, quit_callback_func, gen_callback_func, transaction_queue, blcok_queue):
+    def __init__(self, node_type, shorthand, address, join_callback_func, quit_callback_func, gen_callback_func, transaction_queue, blcok_queue):
         self.app = QtWidgets.QApplication(sys.argv)
         self.main_frame = QtWidgets.QWidget()
         self.ui = QtGuiNode()
@@ -143,6 +146,7 @@ class WindowNode:
         self.ui.set_quit_button(quit_callback_func)
         self.ui.set_gen_button(gen_callback_func)
         self.ui.shorthand_name.setText(shorthand)
+        self.ui.my_addr.setText(address)
 
     def show(self):
         self.main_frame.show()
