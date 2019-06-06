@@ -6,6 +6,7 @@ from ecdsa import SigningKey
 
 from . import server
 from .transaction import TransactionManager
+from .block import BlockManager
 from .usermanager import UserManager
 from .toolbox import bytes_to_hexstring
 
@@ -39,6 +40,7 @@ class NodeClient:
         self.shorthand_id = ''.join(f'{x:02x}' for x in self.verifying_key[:4])
 
         self.tx_manager = TransactionManager(self.signing_key, self.verifying_key)
+        self.block_manager = BlockManager(self.tx_manager)
         self.user_manager = UserManager()
 
         self.is_miner = is_miner
@@ -183,7 +185,7 @@ class NodeClient:
         return (b'ok--',)
     
     def generate_block(self, _, __):
-        print('generate block!! TODOTODO')
+        self.block_manager.generate_block()
         pass
     
     def get_transaction_list_str(self):

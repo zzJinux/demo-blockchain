@@ -1,5 +1,7 @@
 import time
 import pickle
+import threading
+from collections import deque
 from ecdsa import SigningKey
 
 from . import context
@@ -25,12 +27,15 @@ class TransactionManager:
         self.signing_key = signing_key
         self.verifying_key = verifying_key
 
-        self.transaction_list = []
+        self.transaction_queue = deque()
+        self.transaction_queue_lock = threading.RLock()
         self.transaction_dict = dict()
         self.digest_counter = 0
 
         # _WARNING_ never reassign
         self.transaction_list_str = []
+
+        self.listener_list = []
     
     def generate_transaction(self, to_pubkey, data):
         assert isinstance(data, bytes)
@@ -48,22 +53,16 @@ class TransactionManager:
     
     def store_verified_transaction(self, tx):
         # check if already stored
-        if tx[4] in self.transaction_dict: return False
+        with self.transaction_queue_lock:
+            if tx[4] in self.transaction_dict: return False
 
-        self.transaction_dict[tx[4]] = tx
-        self.transaction_list.append(tx)
-        self.transaction_list_str.append(transaction_to_text(tx))
+            self.transaction_dict[tx[4]] = tx
+            self.transaction_queue.append(tx)
+            self.transaction_list_str.append(transaction_to_text(tx))
 
-        n_pendings = len(self.transaction_list) - self.digest_counter
-        if context.AUTO_BLOCK_GEN:
-            for i in range(self.digest_counter, len(self.transaction_list), context.TXS_PER_BLOCK):
-                # block manager!
-                print('plz make a block!')
-                self.transaction_list[i:i+context.TXS_PER_BLOCK]
-                pass
-        else:
-            print('## current # of pending tx for block gen: %d' % n_pendings)
-                
+            for listener in self.listener_list:
+                listener()
+
         return True
     
     def accept_transaction(self, tx):
@@ -77,4 +76,7 @@ class TransactionManager:
         
         return self.store_verified_transaction(tx)
     
+    def add_listener(self, listener):
+        assert callable(listener)
+        self.listener_list.append(listener)
 
