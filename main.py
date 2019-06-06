@@ -32,7 +32,7 @@ def cli_loop(node_client):
         elif command_text.startswith('inspect peers'):
             pass
         elif command_text.startswith('inspect txpool'):
-            pass
+            print('\n'.join(node_client.get_transaction_list_str()))
         else:
             pass
 

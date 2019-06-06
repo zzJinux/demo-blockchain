@@ -1,4 +1,5 @@
 import socketserver
+import traceback
 import pickle
 
 
@@ -27,7 +28,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 # no data to respond
                 pass
         except Exception as e:
-            print(e)
+            traceback.print_exception(type(e), e, e.__traceback__)
         
 
         print('@@ [%s:%d], connection terminates' % self.client_address)

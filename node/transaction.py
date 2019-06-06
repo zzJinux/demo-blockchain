@@ -7,6 +7,16 @@ from . import server
 from . import client
 
 from .validator import validate_transaction
+from .toolbox import bytes_to_hexstring
+
+def transaction_to_text(tx):
+    str_list = [
+        'from: %s' % bytes_to_hexstring(tx[0]),
+        'to: %s' % bytes_to_hexstring(tx[1]),
+        'msg: %s' % tx[2].decode()
+    ]
+
+    return ', '.join(str_list)
 
 
 class TransactionManager:
@@ -18,8 +28,11 @@ class TransactionManager:
         self.transaction_list = []
         self.transaction_set = set()
         self.digest_counter = 0
+
+        # _WARNING_ never reassign
+        self.transaction_list_str = []
     
-    def generate_transaction(self, data, to_pubkey):
+    def generate_transaction(self, to_pubkey, data):
         assert isinstance(data, bytes)
         assert isinstance(to_pubkey, bytes)
 
@@ -39,6 +52,7 @@ class TransactionManager:
 
         self.transaction_set.add(tx[4])
         self.transaction_list.append(tx)
+        self.transaction_list_str.append(transaction_to_text(tx))
 
         n_pendings = len(self.transaction_list) - self.digest_counter
         if context.AUTO_BLOCK_GEN:
