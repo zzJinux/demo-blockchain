@@ -10,9 +10,9 @@ join a peer
 > join <host:port>
 ```
 
-generate a transaction (not tested)
+generate a transaction
 ```
-> tx <your_message>
+> tx <shorthand_id> <your_message>
 ```
 
 terminate this node
