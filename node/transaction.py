@@ -11,9 +11,9 @@ from .toolbox import bytes_to_hexstring
 
 def transaction_to_text(tx):
     str_list = [
+        'msg: %s' % tx[2].decode(),
         'from: %s' % bytes_to_hexstring(tx[0][:4]),
-        'to: %s' % bytes_to_hexstring(tx[1][:4]),
-        'msg: %s' % tx[2].decode()
+        'to: %s' % bytes_to_hexstring(tx[1][:4])
     ]
 
     return ', '.join(str_list)
