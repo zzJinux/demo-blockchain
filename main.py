@@ -63,8 +63,12 @@ class GuiHelper:
         return
     
     def join(self, str1):
-        host, port = str1.split(':', 1)
-        port = int(port)
+        try:
+            host, port = str1.split(':', 1)
+            port = int(port)
+        except:
+            print('Invalid peer address.')
+            return
 
         self.node_client.join((host, port))
         return

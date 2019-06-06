@@ -70,7 +70,10 @@ class NodeClient:
         
     def join(self, peer_address):
         with socket.socket() as sock:
-            sock.connect(peer_address)
+            try:
+                sock.connect(peer_address)
+            except Exception:
+                print('** cannot connect to specified peer [%s:%s]' % peer_address)
 
             # inform my own server address, public key, name
             sock.send(
