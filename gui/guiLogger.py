@@ -8,17 +8,14 @@ class UpdateSignalLogger(QtCore.QThread):
     def __init__(self, log_queue):
         QtCore.QThread.__init__(self)
         self.log_queue = log_queue
-        self.log_queue_cache = self.log_queue[:]
 
     def __del__(self):
         self.wait()
     
     def run(self):
         while True:
-            if set(self.log_queue) & set(self.log_queue_cache):
-                self.log_queue_cache = self.log_queue[:]
-                self.log_changed.emit()
-            self.msleep(500)
+            self.log_changed.emit()
+            self.msleep(1000)
 
 class QtGuiLogger(object):
     def setup(self, main_frame, log_queue):
