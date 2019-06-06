@@ -88,9 +88,14 @@ if __name__ == "__main__":
     
     #tmp
     tmp = []
-    tmp2 = []
 
-    wnd_node = WindowNode(sys.argv[1], node_client.shorthand_id, my_addr, gui_helper.join, gui_helper.quit, gen_func, tmp, tmp2)
+    wnd_node = WindowNode(
+        sys.argv[1], 
+        node_client.shorthand_id, 
+        my_addr, gui_helper.join, 
+        gui_helper.quit, gen_func, 
+        node_client.get_transaction_list_str(), 
+        tmp)
     wnd_node.show()
 
     #cli_loop(node_client)

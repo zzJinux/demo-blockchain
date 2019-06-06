@@ -17,12 +17,8 @@ class UpdateSignalNode(QtCore.QThread):
     
     def run(self):
         while True:
-            if set(self.transaction_queue) & set(self.transaction_queue_cache):
-                self.transaction_queue_cache = self.transaction_queue[:]
-                self.transaction_changed.emit()
-            if set(self.block_queue) & set(self.block_queue_cache):
-                self.block_queue_cache = self.block_queue[:]
-                self.block_changed.emit()
+            self.transaction_changed.emit()
+            self.block_changed.emit()
             self.msleep(1000)
 
 class QtGuiNode(object):
@@ -131,7 +127,15 @@ class QtGuiNode(object):
         self.block_list.setModel(model)
 
 class WindowNode:
-    def __init__(self, node_type, shorthand, address, join_callback_func, quit_callback_func, gen_callback_func, transaction_queue, blcok_queue):
+    def __init__(
+        self,
+        node_type,
+        shorthand,
+        address,
+        join_callback_func,
+        quit_callback_func,
+        gen_callback_func,
+        transaction_queue, blcok_queue):
         self.app = QtWidgets.QApplication(sys.argv)
         self.main_frame = QtWidgets.QWidget()
         self.ui = QtGuiNode()
