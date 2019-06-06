@@ -25,7 +25,7 @@ def cli_loop(node_client):
             assert len(dest_id) == 8
 
             node_client.generate_transaction(dest_id, text.encode())
-        elif command_text.startswith('blk '):
+        elif command_text.startswith('blk'):
             if not node_client.is_miner: continue
             
             node_client.generate_block()
