@@ -1,7 +1,7 @@
 ## Usage
-How to run:
+Run as CLI
 ```
-$ python3 node.py <NAME>
+$ python3 main.py <name>
 ```
 
 ### Commands
