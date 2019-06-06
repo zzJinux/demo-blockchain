@@ -8,7 +8,7 @@ from . import context
 from . import server
 from . import client
 
-from .validator import validate_transaction
+from .validator import sign_transaction, validate_transaction
 from .toolbox import bytes_to_hexstring
 
 def transaction_to_text(tx):
@@ -41,12 +41,11 @@ class TransactionManager:
         assert isinstance(data, bytes)
         assert isinstance(to_pubkey, bytes)
 
-        from_pubkey = self.verifying_key
-        timestamp_bytes = int(time.time()).to_bytes(4, 'big') # in seconds
+        # tx_raw == [ from_pubkey, to_pubkey, data, timestamp:int ]
+        tx_raw = [ self.verifying_key, to_pubkey, data, int(time.time()) ]
+        signature = sign_transaction(tx_raw, self.signing_key)
 
-        tx_bytes = from_pubkey + to_pubkey + data + timestamp_bytes
-        signature = SigningKey.from_string(self.signing_key).sign(tx_bytes)
-        tx = (from_pubkey, to_pubkey, data, timestamp_bytes, signature)
+        tx = (*tx_raw, signature)
 
         self.store_verified_transaction(tx)
         return tx
