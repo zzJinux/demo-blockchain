@@ -26,7 +26,7 @@ class TransactionManager:
         self.verifying_key = verifying_key
 
         self.transaction_list = []
-        self.transaction_set = set()
+        self.transaction_dict = dict()
         self.digest_counter = 0
 
         # _WARNING_ never reassign
@@ -48,9 +48,9 @@ class TransactionManager:
     
     def store_verified_transaction(self, tx):
         # check if already stored
-        if tx[4] in self.transaction_set: return
+        if tx[4] in self.transaction_dict: return False
 
-        self.transaction_set.add(tx[4])
+        self.transaction_dict[tx[4]] = tx
         self.transaction_list.append(tx)
         self.transaction_list_str.append(transaction_to_text(tx))
 
@@ -62,9 +62,9 @@ class TransactionManager:
                 self.transaction_list[i:i+context.TXS_PER_BLOCK]
                 pass
         else:
-            print('## current # of pending tx: %d' % n_pendings)
+            print('## current # of pending tx for block gen: %d' % n_pendings)
                 
-        return
+        return True
     
     def accept_transaction(self, tx):
         if not validate_transaction(tx):
@@ -75,7 +75,6 @@ class TransactionManager:
             # ignore own transaction
             return False
         
-        self.store_verified_transaction(tx)
-        return True
+        return self.store_verified_transaction(tx)
     
 
