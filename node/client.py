@@ -7,6 +7,7 @@ from ecdsa import SigningKey
 from . import server
 from .transaction import TransactionManager
 from .usermanager import UserManager
+from .toolbox import bytes_to_hexstring
 
 # server loop helper
 def run_server(server_instance):
@@ -136,7 +137,7 @@ class NodeClient:
         return
 
     def generate_transaction(self, dest_id, data):
-        print(f'dest_id: {dest_id}')
+        print(f'transaction to_id: {dest_id}')
         user = self.user_manager.get_user(bytes.fromhex(dest_id))
         tx = self.tx_manager.generate_transaction(user[0], data)
         self.broadcast_transaction(tx)
@@ -186,4 +187,5 @@ class NodeClient:
         print('generate block!! TODOTODO')
         pass
     
-
+    def get_transaction_list_str(self):
+        return self.tx_manager.transaction_list_str
