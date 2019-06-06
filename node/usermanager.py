@@ -37,7 +37,7 @@ class UserManager:
 
         return
 
-    def get_user_list(self):
+    def get_addr_list(self):
         lock.acquire()
         user_list = list(iter(self.users.values()))
         lock.release()

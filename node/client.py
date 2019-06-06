@@ -104,7 +104,7 @@ class NodeClient:
         return b'ok--', (self.verifying_key, self.name)
 
     def quit(self):
-        peer_addresses = self.user_manager.get_user_list()
+        peer_addresses = self.user_manager.get_addr_list()
         threads = []
 
         print('** Say goodbye to all peers! **')
@@ -146,7 +146,7 @@ class NodeClient:
     
     def broadcast_transaction(self, tx):
         print('@@ broadcast transaction to all known peers')
-        peer_addresses = self.user_manager.get_user_list()
+        peer_addresses = self.user_manager.get_addr_list()
         threads = []
 
         # multithreaded broadcasting
