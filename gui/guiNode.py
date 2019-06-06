@@ -65,6 +65,9 @@ class QtGuiNode(object):
         self.node_name = QtWidgets.QLabel(main_frame)
         self.node_name.setGeometry(QtCore.QRect(220, 10, 71, 31))
         self.node_name.setObjectName("node_name")
+        self.shorthand_name = QtWidgets.QLineEdit(main_frame)
+        self.shorthand_name.setGeometry(QtCore.QRect(210, 40, 71, 31))
+        self.shorthand_name.setObjectName("shorthand_name")
         self.block_list = QtWidgets.QListView(main_frame)
         self.block_list.setGeometry(QtCore.QRect(340, 100, 141, 281))
         self.block_list.setObjectName("block_list")
@@ -125,7 +128,7 @@ class QtGuiNode(object):
         self.block_list.setModel(model)
 
 class WindowNode:
-    def __init__(self, node_type, join_callback_func, quit_callback_func, gen_callback_func, transaction_queue, blcok_queue):
+    def __init__(self, node_type, shorthand, join_callback_func, quit_callback_func, gen_callback_func, transaction_queue, blcok_queue):
         self.app = QtWidgets.QApplication(sys.argv)
         self.main_frame = QtWidgets.QWidget()
         self.ui = QtGuiNode()
@@ -139,6 +142,7 @@ class WindowNode:
         self.ui.set_join_button(join_callback_func)
         self.ui.set_quit_button(quit_callback_func)
         self.ui.set_gen_button(gen_callback_func)
+        self.ui.shorthand_name.setText(shorthand)
 
     def show(self):
         self.main_frame.show()
