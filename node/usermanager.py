@@ -10,22 +10,6 @@ class UserManager:
     def __init__(self):
         self.users = {}
 
-    def register_handlers(self, server_instance):
-        server_instance.add_handler(b'join', self._join_handler)
-        server_instance.add_handler(b'bye-', self._bye_handler)
-        return
-
-    def _join_handler(self, peer_data):
-        host, port, pubkey, name = peer_data
-        addr = (host, port)
-
-        self.add_user(pubkey, name, addr)
-        return b'ok--', (context.PUBLIC_KEY.to_string(), context.NAME)
-    
-    def _bye_handler(self, pubkey):
-        self.remove_user(pubkey)
-        return
-
     def get_user(self, pubkey):
         return self.users.get(pubkey[:4])
 
