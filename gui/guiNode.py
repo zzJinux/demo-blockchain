@@ -9,8 +9,6 @@ class UpdateSignalNode(QtCore.QThread):
         QtCore.QThread.__init__(self)
         self.transaction_queue = transaction_queue
         self.block_queue = block_queue
-        self.transaction_queue_cache = self.transaction_queue[:]
-        self.block_queue_cache = self.block_queue[:]
     
     def __del__(self):
         self.wait()
