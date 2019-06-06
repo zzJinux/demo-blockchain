@@ -145,6 +145,7 @@ class WindowNode:
             self.ui.node_name.setText("MINER")
             self.ui.gen_button.setText("Generate Block")
             self.ui.gen_public_key.setParent(None)
+            self.ui.gen_message.setParent(None)
 
         self.ui.set_join_button(join_callback_func)
         self.ui.set_quit_button(quit_callback_func)
