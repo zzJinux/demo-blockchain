@@ -113,6 +113,7 @@ class QtGuiNode(object):
 
     def quit_slot(self):
         self.quit_callback()
+        sys.exit(self.app.exec_())
 
     def update_transaction_list(self):
         model = QtGui.QStandardItemModel()
