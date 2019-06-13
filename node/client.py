@@ -40,7 +40,7 @@ class NodeClient:
         self.shorthand_id = ''.join(f'{x:02x}' for x in self.verifying_key[:4])
 
         self.tx_manager = TransactionManager(self.signing_key, self.verifying_key)
-        self.block_manager = BlockManager(self.tx_manager)
+        self.block_manager = BlockManager(self.tx_manager, self.signing_key)
         self.user_manager = UserManager()
 
         self.is_miner = is_miner
@@ -58,6 +58,7 @@ class NodeClient:
         server_instance.add_handler(b'join', self.handle_join)
         server_instance.add_handler(b'bye-', self.handle_bye)
         server_instance.add_handler(b'tx--', self.handle_tx_receive)
+        server_instance.add_handler(b'blk-', self.handle_blk_receive)
         self.server_instance = server_instance
 
         # starts non-blocking server
@@ -185,8 +186,52 @@ class NodeClient:
         return (b'ok--',)
     
     def generate_block(self, _, __):
-        self.block_manager.generate_block()
-        pass
+        block = self.block_manager.generate_block()
+        if block:
+            self.broadcast_block(block)
+
+        return
+    
+    def broadcast_block(self, block):
+        print('@@ broadcast block to all known peers')
+        peer_addresses = self.user_manager.get_addr_list()
+        threads = []
+
+        # multithreaded broadcasting
+        for addr in peer_addresses:
+            thread = Thread(target=self.send_block_single, args=(block, addr))
+            threads.append(thread)
+            thread.start()
+
+        # join before return
+        for thr in threads:
+            thr.join()
+        
+        return
+    
+    def send_block_single(self, block, peer_addr):
+        print('@@ sending one transaction to peer [%s:%s]' % peer_addr)
+
+        with socket.socket() as sock:
+            sock.connect(peer_addr)
+
+            dt = b'blk-' + pickle.dumps(block)
+            assert len(dt) <= 1024
+            sock.send(dt)
+            reply = sock.recv(1024)
+
+            cmd = reply[:4]
+            if cmd != b'ok--':
+                print(f'@Error expects cmd to be "ok--" but was "{cmd}')
+                raise Exception
+
+        return
+    
+    def handle_blk_receive(self, block):
+        accepted = self.block_manager.accept_block(block)
+        if accepted: self.broadcast_block(block)
+
+        return (b'ok--',)
     
     def get_transaction_list_str(self):
         return self.tx_manager.transaction_list_str

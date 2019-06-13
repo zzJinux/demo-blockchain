@@ -28,9 +28,8 @@ class TransactionManager:
         self.verifying_key = verifying_key
 
         self.transaction_queue = deque()
-        self.transaction_queue_lock = threading.RLock()
+        self.rlock = threading.RLock()
         self.transaction_dict = dict()
-        self.digest_counter = 0
 
         # _WARNING_ never reassign
         self.transaction_list_str = []
@@ -52,7 +51,7 @@ class TransactionManager:
     
     def store_verified_transaction(self, tx):
         # check if already stored
-        with self.transaction_queue_lock:
+        with self.rlock:
             if tx[4] in self.transaction_dict: return False
 
             self.transaction_dict[tx[4]] = tx
@@ -63,6 +62,13 @@ class TransactionManager:
                 listener()
 
         return True
+    
+    def store_sliently(self, tx):
+        if tx[4] in self.transaction_dict: return
+
+        with self.rlock:
+            self.transaction_dict[tx[4]] = tx
+            self.transaction_list_str.append(transaction_to_text(tx))
     
     def accept_transaction(self, tx):
         if not validate_transaction(tx):

@@ -27,7 +27,7 @@ def cli_loop(node_client):
         elif command_text.startswith('blk'):
             if not node_client.is_miner: continue
             
-            node_client.generate_block()
+            node_client.generate_block(None, None)
         elif command_text.startswith('inspect peers'):
             pass
         elif command_text.startswith('inspect txpool'):

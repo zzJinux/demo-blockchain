@@ -26,3 +26,54 @@ def validate_transaction(tx):
     tx_bytes = serialize_transaction(tx)
     return vk.verify(signature, tx_bytes)
     
+
+# block == [ index, timestamp:int, prev_block_hash, transaction_list, block_producer, nonce ]
+
+def serialize_block(block):
+    index, timestamp, prev_block_hash, transaction_list, block_producer, nonce = block
+
+    index_bytes = index.to_bytes(2, 'big')
+    timestamp_bytes = timestamp.to_bytes(4, 'big')
+    tx_len_bytes = len(transaction_list).to_bytes(2, 'big')
+
+    barr = bytearray()
+    barr += index_bytes
+    barr += timestamp_bytes
+    barr += prev_block_hash
+    barr += tx_len_bytes
+
+    for tx in transaction_list:
+        barr += serialize_transaction(tx)
+
+    barr += block_producer
+    barr += nonce
+
+    return bytes(barr)
+
+
+def hash_block_bytes(block_bytes):
+    return hashlib.sha256(block_bytes).digest()
+
+
+def hash_block(block):
+    return hash_block_bytes(serialize_block(block))
+
+
+def validate_block(block):
+    index = block[0]
+    if index < 0:
+        return False
+    elif index == 0 and block[2] != bytes(32):
+        return False
+
+    nonce = block[5]
+    block_hash = hash_block(block)
+    if block_hash >= nonce:
+        return False
+
+    tx_list = block[3]
+    for tx in tx_list:
+        if not validate_transaction(tx):
+            return False
+
+    return True
