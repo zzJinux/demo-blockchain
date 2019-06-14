@@ -30,10 +30,12 @@ def cli_loop(node_client):
             node_client.generate_block(None, None)
         elif command_text.startswith('inspect peers'):
             pass
-        elif command_text.startswith('inspect txpool'):
+        elif command_text.startswith('inspect tx'):
             print('\n'.join(node_client.get_transaction_list_str()))
-        elif command_text.startswith('inspect block'):
+        elif command_text.startswith('inspect blk'):
             print('\n'.join(node_client.get_block_list_str()))
+        elif command_text.startswith('inspect q'):
+            print('\n'.join(node_client.get_block_pending_list_str()))
         else:
             pass
 
