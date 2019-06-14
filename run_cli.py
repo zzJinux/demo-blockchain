@@ -32,6 +32,8 @@ def cli_loop(node_client):
             pass
         elif command_text.startswith('inspect txpool'):
             print('\n'.join(node_client.get_transaction_list_str()))
+        elif command_text.startswith('inspect block'):
+            print('\n'.join(node_client.get_block_list_str()))
         else:
             pass
 

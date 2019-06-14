@@ -1,5 +1,6 @@
 import hashlib
 from ecdsa import SigningKey, VerifyingKey
+from .context import DIFFICULTY_TARGET
 
 # tx_raw == [ from_pubkey, to_pubkey, data, timestamp:int ]
 # tx == ( from_pubkey, to_pubkey, data, timestamp:int, signature )
@@ -66,9 +67,8 @@ def validate_block(block):
     elif index == 0 and block[2] != bytes(32):
         return False
 
-    nonce = block[5]
     block_hash = hash_block(block)
-    if block_hash >= nonce:
+    if block_hash >= DIFFICULTY_TARGET:
         return False
 
     tx_list = block[3]
