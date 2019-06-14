@@ -69,11 +69,11 @@ class TransactionManager:
         return True
     
     def store_published_transaction(self, tx):
-        if tx[4] in self.transaction_dict: return
 
         with self.rlock:
-            self.transaction_dict[tx[4]] = tx
-            self.transaction_list_str.append(transaction_to_text(tx))
+            if tx[4] not in self.transaction_dict:
+                self.transaction_dict[tx[4]] = tx
+                self.transaction_list_str.append(transaction_to_text(tx))
 
             self.consume_transactions([tx])
 
@@ -86,9 +86,11 @@ class TransactionManager:
         
     def update_tx_queue(self):
         print(f'@@ len tx queue before: {len(self.transaction_queue)}')
-        self.transaction_queue[:] = list(
-            filter(lambda qtx: qtx[4] in self.transaction_pending_dict, self.transaction_queue)
+        temp_list = list(
+            filter((lambda qtx: qtx[4] in self.transaction_pending_dict), self.transaction_queue)
         )
+        self.transaction_queue.clear()
+        self.transaction_queue.extend(temp_list)
         print(f'@@ len tx queue after: {len(self.transaction_queue)}')
         self.transaction_pending_list_str[:] = [transaction_to_text(qtx) for qtx in self.transaction_queue]
 
