@@ -38,12 +38,14 @@ def new_raw_block(index, timestamp, prev_hash, tx_list, prod_key):
 
 class BlockManager:
 
-    def __init__(self, tx_manager, signing_key):
+    def __init__(self, tx_manager, signing_key, name):
         self.tx_manager = tx_manager
         self.signing_key = signing_key
         self.block_list = []
         self.block_pool = set()
         self.next_index = 0
+
+        self.name = name
 
         # _WARNING_ never reassign
         self.block_list_str = []
