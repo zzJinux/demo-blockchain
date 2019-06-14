@@ -193,7 +193,7 @@ class NodeClient:
         return
     
     def broadcast_block(self, block):
-        print('@@ broadcast block to all known peers')
+        print('@@ broadcast BLOCK to all known peers')
         peer_addresses = self.user_manager.get_addr_list()
         threads = []
 
@@ -210,7 +210,7 @@ class NodeClient:
         return
     
     def send_block_single(self, block, peer_addr):
-        print('@@ sending one transaction to peer [%s:%s]' % peer_addr)
+        print('@@ sending one BLOCK to peer [%s:%s]' % peer_addr)
 
         with socket.socket() as sock:
             sock.connect(peer_addr)
