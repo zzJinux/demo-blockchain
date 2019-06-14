@@ -68,20 +68,30 @@ class TransactionManager:
 
         return True
     
-    def store_sliently(self, tx):
+    def store_published_transaction(self, tx):
         if tx[4] in self.transaction_dict: return
 
         with self.rlock:
             self.transaction_dict[tx[4]] = tx
             self.transaction_list_str.append(transaction_to_text(tx))
 
+            self.consume_transactions([tx])
+
+    def consume_transactions(self, processed_list):
+        for tx in processed_list:
             if tx[4] in self.transaction_pending_dict:
                 del self.transaction_pending_dict[tx[4]]
-            
-            self.transaction_queue[:] = list(
-                filter(lambda qtx: qtx[4] in self.transaction_pending_dict, self.transaction_queue)
-            )
-            self.transaction_pending_list_str[:] = [transaction_to_text(qtx) for qtx in self.transaction_queue]
+        
+        self.update_tx_queue()
+        
+    def update_tx_queue(self):
+        print(f'@@ len tx queue before: {len(self.transaction_queue)}')
+        self.transaction_queue[:] = list(
+            filter(lambda qtx: qtx[4] in self.transaction_pending_dict, self.transaction_queue)
+        )
+        print(f'@@ len tx queue after: {len(self.transaction_queue)}')
+        self.transaction_pending_list_str[:] = [transaction_to_text(qtx) for qtx in self.transaction_queue]
+
         
     def accept_transaction(self, tx):
         if not validate_transaction(tx):

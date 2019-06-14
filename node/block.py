@@ -50,18 +50,22 @@ class BlockManager:
 
         self.rlock = threading.RLock()
 
-        tx_manager.add_listener(self.handle_tx_mutation)
+        tx_manager.add_listener(self.handle_tx_queue_mutation)
     
-    def handle_tx_mutation(self):
+    def handle_tx_queue_mutation(self, processed_list):
         tx_queue = self.tx_manager.transaction_queue
         queue_size = len(tx_queue)
         mylog(f'BLOCK: # pending tx: {queue_size}, not enough')
         mylog(f'BLOCK: current # of pending tx for block gen: {queue_size}')
+
+        self.tx_manager.consume_transactions(processed_list)
+        
         if queue_size < TXS_PER_BLOCK:
             return
+        else:
+            mylog('BLOCK: READY to generate block')
+            return
 
-        mylog('BLOCK: READY to generate block')
-        return
 
     def generate_block(self):
         tx_queue = self.tx_manager.transaction_queue
@@ -80,6 +84,8 @@ class BlockManager:
                 tx_list.append(tx)
                 i -= 1
 
+            self.handle_tx_queue_mutation(tx_list)
+            
             block_raw = new_raw_block(
                 self.next_index, int(time.time()),
                 prev_hash, tx_list, self.signing_key
@@ -91,7 +97,6 @@ class BlockManager:
             self.next_index += 1
             self.store_verified_block(block_raw)
 
-        self.handle_tx_mutation()
         return block_raw
 
     def store_verified_block(self, block):
