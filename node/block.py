@@ -3,6 +3,16 @@ import time
 
 from .context import TXS_PER_BLOCK, DIFFICULTY_TARGET
 from .validator import serialize_block, hash_block, hash_block_bytes, validate_block
+from .toolbox import bytes_to_hexstring
+
+def block_to_text(block):
+    str_list = [
+        'index: %s' % block[0],
+        'prev: %s' % bytes_to_hexstring(block[2][:4]),
+        'nonce: %d' % int.from_bytes(block[5], 'big')
+    ]
+
+    return ', '.join(str_list)
 
 def find_nonce(block):
     assert block[5] == b''
@@ -34,6 +44,9 @@ class BlockManager:
         self.block_list = []
         self.block_pool = set()
         self.next_index = 0
+
+        # _WARNING_ never reassign
+        self.block_list_str = []
 
         self.rlock = threading.RLock()
 
@@ -86,6 +99,9 @@ class BlockManager:
                 self.block_pool.remove(hash_block(bl))
 
             self.block_list[block[0]:] = [block]
+            self.block_list_str[:] = [
+                block_to_text(blk) for blk in self.block_list
+            ]
             self.block_pool.add(hash_block(block))
             for tx in block[3]:
                 self.tx_manager.store_sliently(tx)

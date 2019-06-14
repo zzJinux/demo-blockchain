@@ -235,3 +235,6 @@ class NodeClient:
     
     def get_transaction_list_str(self):
         return self.tx_manager.transaction_list_str
+
+    def get_block_list_str(self):
+        return self.block_manager.block_list_str
