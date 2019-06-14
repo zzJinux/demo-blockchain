@@ -21,7 +21,8 @@ def cli_loop(node_client):
             node_client.join((host, port))
         elif command_text.startswith('tx '):
             dest_id, text = command_text.split(' ')[1:]
-            assert len(dest_id) == 8
+            if len(dest_id) < 8:
+                dest_id = dest_id.ljust(10, '0')
 
             node_client.generate_transaction(dest_id, text.encode())
         elif command_text.startswith('blk'):
@@ -32,10 +33,10 @@ def cli_loop(node_client):
             pass
         elif command_text.startswith('inspect tx'):
             print('\n'.join(node_client.get_transaction_list_str()))
+        elif command_text.startswith('inspect q'):
+            print('\n'.join(node_client.get_transaction_pending_list_str()))
         elif command_text.startswith('inspect blk'):
             print('\n'.join(node_client.get_block_list_str()))
-        elif command_text.startswith('inspect q'):
-            print('\n'.join(node_client.get_block_pending_list_str()))
         else:
             pass
 
