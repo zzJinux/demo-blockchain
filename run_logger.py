@@ -16,7 +16,7 @@ class LoggingServer(BaseHTTPRequestHandler):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
         log.append(post_data.decode('utf-8'))
-        print(log)
+        #print(log)
 
 def run(server_class=HTTPServer, handler_class=LoggingServer, port=8080):
     server_address = ('', port)

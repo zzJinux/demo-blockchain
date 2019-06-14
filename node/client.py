@@ -5,10 +5,10 @@ import pickle
 from ecdsa import SigningKey
 
 from . import server
-from .transaction import TransactionManager
+from .transaction import TransactionManager, transaction_to_text
 from .block import BlockManager
 from .usermanager import UserManager
-from .toolbox import bytes_to_hexstring
+from .toolbox import bytes_to_hexstring, mylog
 
 # server loop helper
 def run_server(server_instance):
@@ -143,8 +143,11 @@ class NodeClient:
 
     def generate_transaction(self, dest_id, data):
         print(f'transaction to_id: {dest_id}')
-        mylog(f"user [{self.name}] generate transaction [{dest_id}]")
         tx = self.tx_manager.generate_transaction(bytes.fromhex(dest_id), data)
+        mylog(f"user [{self.name}] generate transaction [{dest_id}]")
+        tx_info = transaction_to_text(tx)
+        mylog(f"* Trasaction info: [{tx_info}]")
+
         self.broadcast_transaction(tx)
 
         return

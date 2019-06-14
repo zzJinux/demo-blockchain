@@ -19,4 +19,7 @@ def bytes_leading_zero(bytes_len, n_zero_bits):
     return bytes(barr)
 
 def mylog(text):
-    requests.post(url='http://localhost:8080', data=text)
+    try:
+        res = requests.post(url='http://localhost:8080', data=text)
+    except:
+        pass

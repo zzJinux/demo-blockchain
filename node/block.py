@@ -3,7 +3,7 @@ import time
 
 from .context import TXS_PER_BLOCK, DIFFICULTY_TARGET
 from .validator import serialize_block, hash_block, hash_block_bytes, validate_block
-from .toolbox import bytes_to_hexstring, print
+from .toolbox import bytes_to_hexstring, mylog
 
 def block_to_text(block):
     str_list = [
@@ -58,9 +58,9 @@ class BlockManager:
         tx_queue = self.tx_manager.transaction_queue
         queue_size = len(tx_queue)
         if queue_size < TXS_PER_BLOCK:
-            mylog(f'BLOCK: # pending tx: {queue_size}, not enough')
+            print(f'BLOCK: # pending tx: {queue_size}, not enough')
         else:
-            mylog('BLOCK: READY to generate block')
+            print('BLOCK: READY to generate block')
 
     def generate_block(self):
         tx_queue = self.tx_manager.transaction_queue
@@ -80,9 +80,12 @@ class BlockManager:
                 self.next_index, int(time.time()),
                 prev_hash, tx_list, self.signing_key
             )
-            mylog('Calculate Block Nonce START')
+            mylog(f'[{self.name}] attempts to generate a block.')
+            mylog(f'* [{self.name}] calculate block nonce.')
             print('BLOCK: nonce calcuation START')
             find_nonce(block_raw)
+            mylog(f'* [{self.name}] has generated block!')
+            mylog(f'* Block info: [{block_to_text(block_raw)}]')
             print('BLOCK: nonce calcuation END')
             self.next_index += 1
             self.store_verified_block(block_raw)
