@@ -1,21 +1,31 @@
+## Dependency
+```
+$ pip install -r requirements.txt
+```
+
 ## Usage
 Run as CLI
 ```
-$ python3 main.py <name>
+$ python3 run_cli.py <user | miner>
 ```
 
-### Commands
-join a peer
+Run as GUI
+```
+$ python3 run_gui.py <user | miner>
+```
+
+## CLI Commands
+* Join a peer
 ```
 > join <host:port>
 ```
 
-generate a transaction
+* Generate a transaction
 ```
 > tx <shorthand_id> <your_message>
 ```
 
-terminate this node
+* Terminate this node
 ```
 > quit
 ```
