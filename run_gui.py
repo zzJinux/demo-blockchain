@@ -31,7 +31,8 @@ class GuiHelper:
     
     def blk(self, str1, str2):
         if not node_client.is_miner: return
-        pass
+
+        self.node_client.generate_block(None, None)
 
 if __name__ == "__main__":
     argc = len(sys.argv)
