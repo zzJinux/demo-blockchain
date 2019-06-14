@@ -99,6 +99,7 @@ class BlockManager:
                 self.block_pool.remove(hash_block(bl))
 
             self.block_list[block[0]:] = [block]
+            self.next_index = len(self.block_list)
             self.block_list_str[:] = [
                 block_to_text(blk) for blk in self.block_list
             ]
