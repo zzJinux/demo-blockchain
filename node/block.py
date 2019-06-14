@@ -72,7 +72,7 @@ class BlockManager:
                 print(f'@@ current # of pending tx for block gen: {queue_size}')
                 return None
             
-            prev_hash = self.block_list[self.next_index - 1] if self.next_index > 0 else bytes(32)
+            prev_hash = hash_block(self.block_list[self.next_index - 1]) if self.next_index > 0 else bytes(32)
             tx_list = []
             i = TXS_PER_BLOCK
             while i > 0:
