@@ -59,6 +59,6 @@ if __name__ == "__main__":
         node_client.shorthand_id, 
         my_addr, gui_helper.join, 
         gui_helper.quit, gen_func, 
-        node_client.get_transaction_list_str(), 
+        node_client.get_transaction_pending_list_str(), 
         node_client.get_block_list_str())
     wnd_node.show()

@@ -55,11 +55,12 @@ class BlockManager:
     def handle_tx_mutation(self):
         tx_queue = self.tx_manager.transaction_queue
         queue_size = len(tx_queue)
-        print(f'@@ current # of pending tx for block gen: {queue_size}')
+        mylog(f'BLOCK: # pending tx: {queue_size}, not enough')
+        mylog(f'BLOCK: current # of pending tx for block gen: {queue_size}')
         if queue_size < TXS_PER_BLOCK:
             return
 
-        print('** You are ready to generate blocks')
+        mylog('BLOCK: READY to generate block')
         return
 
     def generate_block(self):

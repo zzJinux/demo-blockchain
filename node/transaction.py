@@ -34,6 +34,7 @@ class TransactionManager:
 
         # _WARNING_ never reassign
         self.transaction_list_str = []
+        self.transaction_pending_list_str = []
 
         self.listener_list = []
     
@@ -59,6 +60,7 @@ class TransactionManager:
             self.transaction_list_str.append(transaction_to_text(tx))
 
             self.transaction_pending_dict[tx[4]] = tx
+            self.transaction_pending_list_str.append(transaction_to_text(tx))
             self.transaction_queue.append(tx)
 
             for listener in self.listener_list:
@@ -79,6 +81,7 @@ class TransactionManager:
             self.transaction_queue[:] = list(
                 filter(lambda qtx: qtx[4] in self.transaction_pending_dict, self.transaction_queue)
             )
+            self.transaction_pending_list_str[:] = [transaction_to_text(qtx) for qtx in self.transaction_queue]
         
     def accept_transaction(self, tx):
         if not validate_transaction(tx):
