@@ -97,6 +97,7 @@ class NodeClient:
         
         peer_pubkey, peer_name = data
         self.user_manager.add_user(peer_pubkey, peer_name, peer_address)
+        mylog(f"user [{self.name}] join!")
         return
 
     def handle_join(self, peer_data):
@@ -112,6 +113,7 @@ class NodeClient:
 
         print('** Say goodbye to all peers! **')
         print('@@ send "bye" messages to all peers')
+        mylog(f"user [{self.name}] quit!")
         for addr in peer_addresses:
             thread = Thread(target=self.bye, args=(addr,))
             threads.append(thread)
@@ -141,6 +143,7 @@ class NodeClient:
 
     def generate_transaction(self, dest_id, data):
         print(f'transaction to_id: {dest_id}')
+        mylog(f"user [{self.name}] generate transaction [{dest_id}]")
         tx = self.tx_manager.generate_transaction(bytes.fromhex(dest_id), data)
         self.broadcast_transaction(tx)
 
