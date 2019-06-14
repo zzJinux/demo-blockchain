@@ -30,6 +30,7 @@ class TransactionManager:
         self.transaction_queue = deque()
         self.rlock = threading.RLock()
         self.transaction_dict = dict()
+        self.transaction_pending_dict = dict()
 
         # _WARNING_ never reassign
         self.transaction_list_str = []
@@ -55,8 +56,10 @@ class TransactionManager:
             if tx[4] in self.transaction_dict: return False
 
             self.transaction_dict[tx[4]] = tx
-            self.transaction_queue.append(tx)
             self.transaction_list_str.append(transaction_to_text(tx))
+
+            self.transaction_pending_dict[tx[4]] = tx
+            self.transaction_queue.append(tx)
 
             for listener in self.listener_list:
                 listener()
@@ -69,7 +72,14 @@ class TransactionManager:
         with self.rlock:
             self.transaction_dict[tx[4]] = tx
             self.transaction_list_str.append(transaction_to_text(tx))
-    
+
+            if tx[4] in self.transaction_pending_dict:
+                del self.transaction_pending_dict[tx[4]]
+            
+            self.transaction_queue[:] = list(
+                filter(lambda qtx: qtx[4] in self.transaction_pending_dict, self.transaction_queue)
+            )
+        
     def accept_transaction(self, tx):
         if not validate_transaction(tx):
             # invalid transaction
