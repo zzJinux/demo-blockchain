@@ -52,20 +52,13 @@ class BlockManager:
 
         tx_manager.add_listener(self.handle_tx_queue_mutation)
     
-    def handle_tx_queue_mutation(self, processed_list):
+    def handle_tx_queue_mutation(self):
         tx_queue = self.tx_manager.transaction_queue
         queue_size = len(tx_queue)
-        print(f'BLOCK: # pending tx: {queue_size}, not enough')
-        print(f'BLOCK: current # of pending tx for block gen: {queue_size}')
-
-        self.tx_manager.consume_transactions(processed_list)
-        
         if queue_size < TXS_PER_BLOCK:
-            return
+            mylog(f'BLOCK: # pending tx: {queue_size}, not enough')
         else:
-            print('BLOCK: READY to generate block')
-            return
-
+            mylog('BLOCK: READY to generate block')
 
     def generate_block(self):
         tx_queue = self.tx_manager.transaction_queue
@@ -77,14 +70,9 @@ class BlockManager:
                 return None
             
             prev_hash = hash_block(self.block_list[self.next_index - 1]) if self.next_index > 0 else bytes(32)
-            tx_list = []
-            i = TXS_PER_BLOCK
-            while i > 0:
-                tx = tx_queue.popleft()
-                tx_list.append(tx)
-                i -= 1
+            tx_list = list(tx_queue)[:TXS_PER_BLOCK]
 
-            self.handle_tx_queue_mutation(tx_list)
+            self.tx_manager.consume_transactions(tx_list)
             
             block_raw = new_raw_block(
                 self.next_index, int(time.time()),
@@ -96,6 +84,8 @@ class BlockManager:
             print('BLOCK: nonce calcuation END')
             self.next_index += 1
             self.store_verified_block(block_raw)
+            self.handle_tx_queue_mutation()
+
 
         return block_raw
 
@@ -112,7 +102,7 @@ class BlockManager:
             ]
             self.block_pool.add(hash_block(block))
             for tx in block[3]:
-                self.tx_manager.store_sliently(tx)
+                self.tx_manager.store_published_transaction(tx)
 
     def accept_block(self, block):
         if self.signing_key == block[4]:
