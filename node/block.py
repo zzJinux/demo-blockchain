@@ -132,10 +132,14 @@ class BlockManager:
             mylog('# BLOCK dicarded: previous block mismatch')
             return False
 
-        if index == self.next_index - 1 and block[1] < self.block_list[index][1]:
+        if index == self.next_index - 1:
+            if block[1] < self.block_list[index][1]:
             # take earlier block
-            mylog('# BLOCK: block racing')
+                mylog('# BLOCK: RACE')
             self.next_index -= 1
+            else:
+                mylog('# BLOCK: DISCARD old block')
+                return False
         
         self.store_verified_block(block)
         mylog('# BLOCK accepted!')
