@@ -53,9 +53,6 @@ if __name__ == "__main__":
     gen_func = gui_helper.tx
     if is_miner:
         gen_func = gui_helper.blk
-    
-    #tmp
-    tmp = []
 
     wnd_node = WindowNode(
         sys.argv[1], 
@@ -63,5 +60,5 @@ if __name__ == "__main__":
         my_addr, gui_helper.join, 
         gui_helper.quit, gen_func, 
         node_client.get_transaction_list_str(), 
-        tmp)
+        node_client.get_block_list_str())
     wnd_node.show()
