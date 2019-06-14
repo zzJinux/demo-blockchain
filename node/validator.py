@@ -63,17 +63,21 @@ def hash_block(block):
 def validate_block(block):
     index = block[0]
     if index < 0:
+        print('@@ INVALID_BLOCK: index < 0')
         return False
     elif index == 0 and block[2] != bytes(32):
+        print('@@ INVALID_BLOCK: index == 0 but prev_hash non-zero')
         return False
 
     block_hash = hash_block(block)
     if block_hash >= DIFFICULTY_TARGET:
+        print('@@ INVALID_BLOCK: fail on comparison on DIFFICULTY_TARGET')
         return False
 
     tx_list = block[3]
     for tx in tx_list:
         if not validate_transaction(tx):
+            print('@@ INVALID_BLOCK: invalid transaction')
             return False
 
     return True
