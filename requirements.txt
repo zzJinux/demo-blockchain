@@ -8,4 +8,4 @@ PyQt5-sip==4.19.17
 pyqt5-tools==5.11.3.1.4
 python-dotenv==0.10.3
 requests==2.22.0
-urllib3==1.25.3
+urllib3==1.26.5
